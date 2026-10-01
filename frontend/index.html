@@ -4,49 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1F2937">
-    <title>Glucose PWA</title>
+    <title>Glucose PWA V2</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="app-container">
         <header>
             <h1>Glucose AI</h1>
+            <button id="logout-btn" class="btn-small" style="display: none;">Logout</button>
         </header>
 
-        <section class="card forecast-card">
-            <div class="forecast-title">2-Hour Forecast</div>
-            <div class="forecast-value" id="forecast-value">
-                <span>--</span>
-            </div>
-        </section>
-
-        <section class="card">
-            <form id="log-form">
+        <!-- Auth Section -->
+        <section id="auth-section" class="card">
+            <h2 id="auth-title">Login</h2>
+            <form id="auth-form">
                 <div class="form-group">
-                    <label for="glucose">Blood Glucose (mg/dL)</label>
-                    <input type="number" id="glucose" placeholder="e.g. 105" step="0.1">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="carbs">Carbohydrates (g)</label>
-                    <input type="number" id="carbs" placeholder="e.g. 45" step="0.1">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
                 </div>
-                
-                <div class="form-group">
-                    <label for="insulin">Insulin Dose (U)</label>
-                    <input type="number" id="insulin" placeholder="e.g. 4" step="0.1">
+                <button type="submit" class="btn" id="auth-submit">Login</button>
+                <div style="margin-top: 10px; text-align: center; font-size: 0.875rem;">
+                    <a href="#" id="toggle-auth" style="color: var(--primary-color);">Need an account? Register</a>
                 </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="alcohol">
-                    <label for="alcohol" style="margin: 0;">Alcohol Consumed</label>
-                </div>
-                
-                <button type="submit" class="btn">Save Log</button>
             </form>
         </section>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" style="display: none;">
+            <div class="top-cards">
+                <section class="card forecast-card">
+                    <div class="forecast-title">2-Hr Forecast</div>
+                    <div class="forecast-value" id="forecast-value">
+                        <span>--</span>
+                    </div>
+                </section>
+                
+                <section class="card iob-card">
+                    <div class="forecast-title">Active Insulin</div>
+                    <div class="forecast-value" id="iob-value">
+                        <span>-- U</span>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card chart-card" style="margin-top: 16px;">
+                <div class="forecast-title">24-Hour Trend</div>
+                <canvas id="glucoseChart" height="200"></canvas>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <form id="log-form">
+                    <div class="form-group">
+                        <label for="glucose">Blood Glucose (mg/dL)</label>
+                        <input type="number" id="glucose" placeholder="e.g. 105" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="carbs">Carbohydrates (g)</label>
+                        <input type="number" id="carbs" placeholder="e.g. 45" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="insulin">Insulin Dose (U)</label>
+                        <input type="number" id="insulin" placeholder="e.g. 4" step="0.1">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="alcohol">
+                        <label for="alcohol" style="margin: 0;">Alcohol Consumed</label>
+                    </div>
+                    
+                    <button type="submit" class="btn">Save Log</button>
+                </form>
+            </section>
+        </div>
 
         <div class="status-bar">
             <div class="status-indicator">

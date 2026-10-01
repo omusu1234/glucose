@@ -54,3 +54,18 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || 'Glucose Alert';
+  const options = {
+    body: data.body || 'Please check your glucose levels.',
+    icon: 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png',
+    badge: 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png',
+    vibrate: [200, 100, 200]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});

@@ -6,3 +6,6 @@ numpy<2.0.0
 statsmodels==0.14.0
 pydantic==2.4.2
 python-dotenv==1.0.0
+PyJWT==2.8.0
+passlib[bcrypt]==1.7.4
+pywebpush==1.14.0

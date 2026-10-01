@@ -79,3 +79,36 @@ def generate_forecast(db_records):
     except Exception as e:
         print(f"Forecasting error: {e}")
         return {"forecast_value": "--", "trend": "STABLE", "msg": "Error fitting model"}
+
+def calculate_iob(insulin_records):
+    """
+    Calculates active Insulin-On-Board (IOB).
+    Assumes rapid-acting insulin (duration ~4 hours).
+    Decay profile: roughly linear over 4 hours for simplicity.
+    """
+    if not insulin_records:
+        return 0.0
+    
+    iob = 0.0
+    now = pd.Timestamp.utcnow()
+    
+    for r in insulin_records:
+        dose = r.get('insulin')
+        if dose is None or dose <= 0:
+            continue
+            
+        # Ensure timestamp is tz-aware UTC
+        ts = pd.to_datetime(r['timestamp'])
+        if ts.tzinfo is None:
+            ts = ts.tz_localize('UTC')
+            
+        # Time since dose in hours
+        hours_elapsed = (now - ts).total_seconds() / 3600
+        
+        if 0 <= hours_elapsed < 4:
+            # Linear decay: 100% active at t=0, 0% at t=4
+            remaining = dose * (1 - (hours_elapsed / 4))
+            iob += remaining
+            
+    return round(iob, 2)
+

@@ -21,10 +21,16 @@ def get_db_connection():
 
 def create_schema():
     """
-    Creates the logs table if it doesn't exist.
-    Run this manually or on app startup.
+    Creates tables if they don't exist and runs necessary ALTER statements.
     """
     schema = """
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS glucose_logs (
         id SERIAL PRIMARY KEY,
         glucose NUMERIC,
@@ -35,7 +41,20 @@ def create_schema():
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
     
+    ALTER TABLE glucose_logs ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id);
+    
     CREATE INDEX IF NOT EXISTS idx_glucose_logs_timestamp ON glucose_logs(timestamp);
+    CREATE INDEX IF NOT EXISTS idx_glucose_logs_user_id ON glucose_logs(user_id);
+
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        endpoint TEXT NOT NULL,
+        p256dh TEXT NOT NULL,
+        auth TEXT NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, endpoint)
+    );
     """
     
     conn = get_db_connection()
@@ -43,7 +62,7 @@ def create_schema():
         with conn.cursor() as cur:
             cur.execute(schema)
         conn.commit()
-        print("Schema ensured.")
+        print("Schema ensured (V2).")
     except Exception as e:
         print(f"Schema creation failed: {e}")
         conn.rollback()
