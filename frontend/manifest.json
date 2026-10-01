@@ -1,0 +1,17 @@
+{
+  "name": "Glucose PWA",
+  "short_name": "Glucose",
+  "description": "Advanced offline-first diabetes management app.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#1F2937",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3004/3004458.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
