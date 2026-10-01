@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000/api'; // Change to production URL later
+const API_BASE_URL = 'https://glucose-jpxx.onrender.com/api';
 
 // DOM Elements
 const form = document.getElementById('log-form');
