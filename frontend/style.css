@@ -188,3 +188,16 @@ header h1 {
 .btn-small:hover {
   background-color: var(--text-muted);
 }
+
+.chart-container {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+}
+
+canvas#glucoseChart {
+  width: 100% !important;
+  height: 200px !important;
+  max-height: 200px;
+}
