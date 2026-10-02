@@ -18,7 +18,6 @@ const statusText = document.getElementById('status-text');
 const queueCount = document.getElementById('queue-count');
 const forecastValue = document.getElementById('forecast-value');
 const iobValue = document.getElementById('iob-value');
-let glucoseChartInstance = null;
 
 let isLoginMode = true;
 let authToken = localStorage.getItem('jwt_token') || null;
@@ -123,7 +122,7 @@ async function initDashboard() {
         await Promise.all([
             fetchForecast(),
             fetchIOB(),
-            fetchAndRenderChart()
+            fetchAndRenderStats()
         ]);
         await setupWebPush();
     }
@@ -183,7 +182,7 @@ async function syncData() {
             for (const log of logs) await removeSyncedLog(log.id);
             fetchForecast();
             fetchIOB();
-            fetchAndRenderChart();
+            fetchAndRenderStats();
         } else if (response.status === 401) {
             logoutBtn.click();
         }
@@ -219,53 +218,24 @@ async function fetchIOB() {
     } catch (e) {}
 }
 
-async function fetchAndRenderChart() {
+async function fetchAndRenderStats() {
     if (!navigator.onLine) return;
     try {
         const res = await fetchWithAuth(`${API_BASE_URL}/logs/recent`);
         if (res.ok) {
             const data = await res.json();
+            const glucoseData = data.map(d => d.glucose).filter(g => g !== null);
             
-            const labels = data.map(d => {
-                const date = new Date(d.timestamp);
-                return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
-            });
-            const glucoseData = data.map(d => d.glucose);
+            if (glucoseData.length === 0) return;
             
-            if (glucoseChartInstance) glucoseChartInstance.destroy();
+            const avg = glucoseData.reduce((a, b) => a + b, 0) / glucoseData.length;
+            const high = Math.max(...glucoseData);
+            const low = Math.min(...glucoseData);
+            const a1c = (avg + 46.7) / 28.7;
             
-            const ctx = document.getElementById('glucoseChart').getContext('2d');
-            glucoseChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Glucose (mg/dL)',
-                        data: glucoseData,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { 
-                            beginAtZero: false,
-                            grid: { color: '#334155' },
-                            ticks: { color: '#94a3b8' }
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { color: '#94a3b8', maxTicksLimit: 6 }
-                        }
-                    }
-                }
-            });
+            document.getElementById('stat-avg').textContent = Math.round(avg);
+            document.getElementById('stat-range').textContent = `${Math.round(high)} / ${Math.round(low)}`;
+            document.getElementById('stat-a1c').textContent = `${a1c.toFixed(1)}%`;
         }
     } catch (e) {}
 }

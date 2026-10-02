@@ -189,15 +189,31 @@ header h1 {
   background-color: var(--text-muted);
 }
 
-.chart-container {
-  position: relative;
-  height: 200px;
-  width: 100%;
-  overflow: hidden;
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
 }
-
-canvas#glucoseChart {
-  width: 100% !important;
-  height: 200px !important;
-  max-height: 200px;
+.stat-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: monospace;
+    color: var(--text-main);
 }

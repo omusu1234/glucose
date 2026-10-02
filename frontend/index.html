@@ -8,7 +8,6 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -54,10 +53,21 @@
                 </section>
             </div>
 
-            <section class="card chart-card" style="margin-top: 16px;">
-                <div class="forecast-title">24-Hour Trend</div>
-                <div class="chart-container">
-                    <canvas id="glucoseChart"></canvas>
+            <section class="card digital-stats-card" style="margin-top: 16px;">
+                <div class="forecast-title">24-Hour Digital Summary</div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Average</span>
+                        <span class="stat-value" id="stat-avg">--</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">High / Low</span>
+                        <span class="stat-value" id="stat-range">-- / --</span>
+                    </div>
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <span class="stat-label">Estimated HbA1c</span>
+                        <span class="stat-value" id="stat-a1c" style="color: var(--accent-color);">--%</span>
+                    </div>
                 </div>
             </section>
 
